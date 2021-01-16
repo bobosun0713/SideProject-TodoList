@@ -33,6 +33,7 @@
         </button>
       </div>
     </div>
+
     <!-- 新增 -->
     <div class="todo-add">
       <input
@@ -54,10 +55,10 @@
     </div>
 
     <!-- item -->
-    <draggable v-model="filterTodo">
+    <draggable v-model="allAry">
       <transition-group name="slide-left">
         <todo-item
-          v-for="item in allAry"
+          v-for="item in filterTodo"
           :key="item.id"
           :item="item"
           :allAry="allAry"

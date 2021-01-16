@@ -16,6 +16,7 @@
           v-model="item.title"
         />
       </div>
+
       <!-- item-control -->
       <div class="todo-item__control">
         <button class="todo-item__control__button" @click="pinClick">
@@ -34,6 +35,7 @@
           <font-awesome-icon icon="pencil-alt" class="icon-1" />
         </button>
       </div>
+
       <!-- item-status -->
       <div class="todo-item__status">
         <span>1</span>
@@ -41,6 +43,7 @@
         <span>3</span>
       </div>
     </div>
+
     <!-- 引入 -->
     <transition name="slide">
       <todo-edit-form
