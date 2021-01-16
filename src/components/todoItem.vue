@@ -1,12 +1,16 @@
 <template>
-  <div class="todo-item" :class="{ 'todo-item--active': item.fav }">
+  <div
+    class="todo-item"
+    :class="{ 'todo-item--active': item.fav, 'todo-item--height': isOpen }"
+  >
+    <div class="todo-item__drop"></div>
     <div class="todo-item__content">
       <!-- item-title -->
       <div class="todo-item__title">
         <input
           class="todo-item__title__chkbox"
           type="checkbox"
-          v-model="item.completed"
+          v-model="editTitle"
         />
         <input
           class="todo-item__title__input"
@@ -32,7 +36,11 @@
           />
         </button>
         <button class="todo-item__control__button" @click="openEdit">
-          <font-awesome-icon icon="pencil-alt" class="icon-1" />
+          <font-awesome-icon
+            icon="pencil-alt"
+            v-show="!item.completed"
+            class="icon-1"
+          />
         </button>
       </div>
 
@@ -45,15 +53,13 @@
     </div>
 
     <!-- 引入 -->
-    <transition name="slide">
-      <todo-edit-form
-        :item="item"
-        :allAry="allAry"
-        @close-todo="closeTodo"
-        @edit-todo="editTodo"
-        v-if="isOpen"
-      ></todo-edit-form>
-    </transition>
+    <todo-edit-form
+      :item="item"
+      :allAry="allAry"
+      @close-todo="closeTodo"
+      @edit-todo="editTodo"
+    ></todo-edit-form>
+    <!-- </transition> -->
   </div>
 </template>
 
@@ -82,7 +88,7 @@ export default {
     return {
       isOpen: false,
       // 暫存明抽
-      editTitle: '',
+      editTitle: this.item.title,
     }
   },
   methods: {
@@ -92,7 +98,7 @@ export default {
     },
     // 關閉編輯
     closeTodo() {
-      this.item.title = this.editTitle
+      this.editTitle = this.item.title
       this.isOpen = false
     },
 
@@ -103,14 +109,12 @@ export default {
 
     // 修改
     editTodo(data) {
-      data.title = this.item.title
+      if (!this.item.title) return alert('請輸入更改標題')
+      data.title = editTitle
       let editIndex = this.allAry.findIndex((val) => val.id === data.id)
       this.allAry.splice(editIndex, 1, data)
       this.isOpen = false
     },
-  },
-  mounted() {
-    this.editTitle = this.item.title
   },
 }
 </script>
@@ -120,10 +124,12 @@ export default {
   overflow: hidden;
   height: auto;
   width: 620px;
+  height: 105px;
   border-radius: 5px;
   box-shadow: 0 0 7px #888;
   margin: 0 auto;
   background-color: #f1f1f1;
+  transition: all 0.5s;
 
   // 上層
   .todo-item__content {
@@ -131,6 +137,8 @@ export default {
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
+    position: relative;
+    z-index: 2;
     padding: 20px 30px;
 
     // 標題
@@ -184,7 +192,10 @@ export default {
 }
 
 .todo-item--active {
-  background-color: wheat;
+  background-color: antiquewhite;
+}
+.todo-item--height {
+  height: 523px;
 }
 
 .todo-item + .todo-item {

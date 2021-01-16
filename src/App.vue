@@ -35,7 +35,7 @@
     </div>
 
     <!-- 新增 -->
-    <div class="todo-add">
+    <div class="todo-add" :class="{ 'todo-add--height': isOpen }">
       <input
         class="todo-add__input"
         type="text"
@@ -55,7 +55,7 @@
     </div>
 
     <!-- item -->
-    <draggable v-model="allAry">
+    <draggable class="todo-list" v-model="allAry">
       <transition-group name="slide-left">
         <todo-item
           v-for="item in filterTodo"
@@ -87,6 +87,7 @@ export default {
 
       // 資料標題
       addTitle: '',
+
       // 原始資料
       allAry: [],
     }
@@ -189,9 +190,10 @@ export default {
   // add
   &-add {
     width: 620px;
+    height: 65px;
     margin: 20px auto;
     border-radius: 5px;
-    transition: height 1s;
+    transition: all 0.5s;
     overflow: hidden;
 
     .todo-add__input {
@@ -205,6 +207,15 @@ export default {
       background-color: white;
       z-index: 1;
     }
+  }
+
+  &-add--height {
+    height: 485px;
+  }
+
+  // lists
+  &-list {
+    padding: 5px 0;
   }
 }
 </style>

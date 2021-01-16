@@ -54,10 +54,12 @@ body {
 
 .slide-enter-active,
 .slide-leave-active {
-  transition: opacity 1s, transform 1s;
+  transition: all 0.5s;
 }
 
 .slide-leave {
+  height: 60px;
+
   transform: translateY(0);
 }
 
@@ -78,13 +80,15 @@ body {
 
 .slide-left-enter-active,
 .slide-left-leave-active {
-  transition: opacity 1s, transform 1s;
+  transition: opacity 0.5s, transform 2s;
 }
 
 .slide-left-leave {
+  opacity: 1;
   transform: translateX(0);
 }
 
 .slide-left-leave-to {
+  opacity: 0;
   transform: translateX(-200px);
 }

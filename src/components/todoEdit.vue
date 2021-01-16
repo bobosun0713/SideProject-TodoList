@@ -2,15 +2,24 @@
   <div class="todo-form">
     <div class="todo-form__content">
       <div class="todo-form__content__date">
-        <p>Deadline</p>
+        <p>
+          <font-awesome-icon icon="calendar-alt" class="icon-1" />
+          Deadline
+        </p>
         <input type="date" v-model="updateData.day" />
       </div>
       <div class="todo-form__content__file">
-        <p>File</p>
+        <p>
+          <font-awesome-icon icon="file-signature" class="icon-1" />
+          File File
+        </p>
         <input type="file" />
       </div>
       <div class="todo-form__content__text">
-        <p>Comment</p>
+        <p>
+          <font-awesome-icon icon="comments" class="icon-1" />
+          Comment
+        </p>
         <textarea class="" v-model="updateData.content"></textarea>
       </div>
     </div>
@@ -70,6 +79,15 @@ export default {
       !chkAry ? this.addAction() : this.editAction()
     },
 
+    clearItem() {
+      Object.keys(this.item).forEach((val) => {
+        console.log(this.item[val])
+        if (this.item[val] !== false) {
+          this.item[val] = ''
+        }
+      })
+    },
+
     addAction() {
       this.$emit('add-todo', this.updateData)
     },
@@ -77,6 +95,7 @@ export default {
     editAction() {
       this.updateData.id = this.editId
       this.$emit('edit-todo', this.updateData)
+      this.clearItem()
     },
   },
   mounted() {
@@ -91,10 +110,11 @@ export default {
 
 <style scoped lang="scss">
 .todo-form {
-  transform-origin: center top;
   background-color: #f2f2f2;
   box-shadow: inset 0 0 2px #888;
   border-top: 1px solid #888;
+
+  //
 
   // 資料
   &__content {
