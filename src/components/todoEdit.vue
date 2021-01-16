@@ -108,9 +108,13 @@ export default {
     this.editId = this.item.id // 暫存id
     this.updateData = { ...this.item } // 解構資料
 
-    // 新建id
-    let idx = this.allAry.map((val) => val.id)
-    this.updateData.id = idx.length === 0 ? 1 : idx[idx.length - 1] + 1
+    // 找最大值 +1
+    let idx = Math.max(...this.allAry.map((val) => val.id))
+    if (this.allAry.length === 0) {
+      this.updateData.id = 1
+    } else {
+      this.updateData.id = idx + 1
+    }
     console.log('創建ID mounted =>', this.updateData.id)
   },
 }

@@ -20,21 +20,11 @@ body {
 .icon-1 {
   font-size: 1.25rem;
   color: #165675;
-  transition: all 0.5s;
 }
 .icon-2 {
   transition: all 0.5s;
   font-size: 1.25rem;
   color: rgb(228, 187, 74);
-}
-// 星星
-.iconStar {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-.iconStar-opacity {
-  opacity: 0;
 }
 // 狀態欄
 .icon-status {

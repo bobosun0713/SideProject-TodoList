@@ -114,27 +114,15 @@ export default {
     filterTodo() {
       switch (this.tabName) {
         case 'all':
-          return this.allAry.sort((itemA, itemB) => {
-            itemA = (itemA.fav ? -100 : 0) + itemA.id
-            itemB = (itemB.fav ? -100 : 0) + itemB.id
-            return itemA > itemB ? 1 : itemA === itemB ? 0 : -1
-          })
+          return this.allAry.slice(0).sort((itemA) => (itemA.fav ? -1 : 0))
         case 'progress':
           return this.allAry
             .filter((val) => !val.completed)
-            .sort((itemA, itemB) => {
-              itemA = (itemA.fav ? -100 : 0) + itemA.id
-              itemB = (itemB.fav ? -100 : 0) + itemB.id
-              return itemA > itemB ? 1 : itemA === itemB ? 0 : -1
-            })
+            .sort((itemA) => (itemA.fav ? -1 : 0))
         case 'completed':
           return this.allAry
             .filter((val) => val.completed)
-            .sort((itemA, itemB) => {
-              itemA = (itemA.fav ? -100 : 0) + itemA.id
-              itemB = (itemB.fav ? -100 : 0) + itemB.id
-              return itemA > itemB ? 1 : itemA === itemB ? 0 : -1
-            })
+            .sort((itemA) => (itemA.fav ? -1 : 0))
       }
     },
     tasksLeft() {

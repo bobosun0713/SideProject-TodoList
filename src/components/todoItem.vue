@@ -30,14 +30,10 @@
         <button class="todo-item__control__button" @click="pinClick">
           <font-awesome-icon
             :icon="['far', 'star']"
-            class="icon-1 iconStar"
-            :class="{ 'iconStar-opacity': item.fav }"
+            class="icon-1"
+            v-if="!item.fav"
           />
-          <font-awesome-icon
-            :icon="['fas', 'star']"
-            :class="{ 'iconStar-opacity': !item.fav }"
-            class="icon-2"
-          />
+          <font-awesome-icon v-else :icon="['fas', 'star']" class="icon-2" />
         </button>
         <button class="todo-item__control__button" @click="switchBtn">
           <font-awesome-icon
@@ -45,6 +41,9 @@
             v-show="!item.completed"
             class="icon-1"
           />
+        </button>
+        <button class="todo-item__control__button" @click="deleteTodo">
+          <font-awesome-icon icon="trash-alt" class="icon-1" />
         </button>
       </div>
 
@@ -109,6 +108,12 @@ export default {
     // 釘選
     pinClick() {
       this.item.fav = !this.item.fav
+    },
+
+    // 刪除
+    deleteTodo() {
+      let deleteIdx = this.allAry.findIndex((val) => val.id === this.item.id)
+      this.allAry.splice(deleteIdx, 1)
     },
 
     // 修改
@@ -209,11 +214,8 @@ export default {
       &__button {
         border: 0;
         background-color: transparent;
+        margin-left: 15px;
         cursor: pointer;
-      }
-      &__button:nth-of-type(1) {
-        position: relative;
-        margin-right: 15px;
       }
     }
 
