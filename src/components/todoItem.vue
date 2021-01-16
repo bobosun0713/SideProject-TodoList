@@ -1,5 +1,5 @@
 <template>
-  <div class="todo-item" :class="{ 'todo-item--active': item.completed }">
+  <div class="todo-item" :class="{ 'todo-item--active': item.fav }">
     <div class="todo-item__content">
       <!-- item-title -->
       <div class="todo-item__title">
@@ -148,7 +148,8 @@ export default {
         margin-left: 5px;
         width: 100%;
         font-size: 1.25rem;
-        background-color: #f1f1f1;
+        // background-color: #f1f1f1;
+        background-color: transparent;
       }
 
       &__input--active {
