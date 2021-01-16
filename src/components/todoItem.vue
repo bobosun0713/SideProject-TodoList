@@ -3,20 +3,24 @@
     class="todo-item"
     :class="{ 'todo-item--active': item.fav, 'todo-item--height': isOpen }"
   >
-    <div class="todo-item__drop"></div>
-    <div class="todo-item__content">
+    <div class="todo-item__dropButton" v-show="!isOpen && !item.completed">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="todo-item__content" v-if="!isOpen">
       <!-- item-title -->
       <div class="todo-item__title">
         <input
           class="todo-item__title__chkbox"
           type="checkbox"
-          v-model="editTitle"
+          v-model="item.completed"
         />
         <input
           class="todo-item__title__input"
           :class="{ 'todo-item__title__input--active': item.completed }"
           type="text"
-          :disabled="!isOpen"
+          disabled
           v-model="item.title"
         />
       </div>
@@ -35,7 +39,7 @@
             class="icon-2"
           />
         </button>
-        <button class="todo-item__control__button" @click="openEdit">
+        <button class="todo-item__control__button" @click="switchBtn">
           <font-awesome-icon
             icon="pencil-alt"
             v-show="!item.completed"
@@ -46,20 +50,27 @@
 
       <!-- item-status -->
       <div class="todo-item__status">
-        <span>1</span>
-        <span>2</span>
-        <span>3</span>
+        <span>
+          <font-awesome-icon icon="calendar-alt" class="icon" />
+          {{ item.day }}
+        </span>
+        <span v-if="item.file"
+          ><font-awesome-icon icon="file-signature" class="icon"
+        /></span>
+        <span v-if="item.content"
+          ><font-awesome-icon icon="comments" class="icon"
+        /></span>
       </div>
     </div>
 
     <!-- 引入 -->
     <todo-edit-form
+      v-else
       :item="item"
       :allAry="allAry"
-      @close-todo="closeTodo"
       @edit-todo="editTodo"
+      @close-todo="switchBtn"
     ></todo-edit-form>
-    <!-- </transition> -->
   </div>
 </template>
 
@@ -87,19 +98,12 @@ export default {
   data() {
     return {
       isOpen: false,
-      // 暫存明抽
-      editTitle: this.item.title,
     }
   },
   methods: {
-    // 開啟編輯
-    openEdit() {
-      this.isOpen = true
-    },
-    // 關閉編輯
-    closeTodo() {
-      this.editTitle = this.item.title
-      this.isOpen = false
+    // 開關編輯
+    switchBtn() {
+      this.isOpen = !this.isOpen
     },
 
     // 釘選
@@ -109,11 +113,9 @@ export default {
 
     // 修改
     editTodo(data) {
-      if (!this.item.title) return alert('請輸入更改標題')
-      data.title = editTitle
       let editIndex = this.allAry.findIndex((val) => val.id === data.id)
       this.allAry.splice(editIndex, 1, data)
-      this.isOpen = false
+      this.switchBtn()
     },
   },
 }
@@ -130,15 +132,50 @@ export default {
   margin: 0 auto;
   background-color: #f1f1f1;
   transition: all 0.5s;
+  position: relative;
+
+  // 拖拉小手
+  &__dropButton {
+    position: absolute;
+    width: 30px;
+    height: 50px;
+
+    top: 0;
+    bottom: 0;
+    margin: auto;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    opacity: 0;
+    transition: opacity 0.5s;
+    cursor: pointer;
+
+    > span {
+      display: inline-block;
+      margin: 2px 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #888;
+    }
+  }
+
+  // 滑動拖拉小手顯示
+  &:hover &__dropButton {
+    opacity: 1;
+  }
 
   // 上層
-  .todo-item__content {
+  &__content {
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    position: relative;
-    z-index: 2;
+    // position: relative;
+    // z-index: 2;
     padding: 20px 30px;
 
     // 標題
@@ -159,7 +196,6 @@ export default {
         margin-left: 5px;
         width: 100%;
         font-size: 1.25rem;
-        // background-color: #f1f1f1;
         background-color: transparent;
       }
 
@@ -170,8 +206,6 @@ export default {
     }
     // 按鈕
     .todo-item__control {
-      align-self: flex-end;
-
       &__button {
         border: 0;
         background-color: transparent;
@@ -187,18 +221,22 @@ export default {
     .todo-item__status {
       width: 100%;
       margin: 5px 0 0 40px;
+
+      > span {
+        margin-right: 15px;
+      }
     }
   }
 }
+.todo-item + .todo-item {
+  margin-top: 20px;
+}
 
+// 修飾效果
 .todo-item--active {
   background-color: antiquewhite;
 }
 .todo-item--height {
-  height: 523px;
-}
-
-.todo-item + .todo-item {
-  margin-top: 20px;
+  height: 485px;
 }
 </style>

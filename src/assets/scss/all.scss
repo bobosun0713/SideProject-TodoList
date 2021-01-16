@@ -44,7 +44,7 @@ body {
 // transition - 由上往下
 .slide-enter {
   opacity: 0;
-  transform: translateY(-420px);
+  transform: translateY(-200px);
 }
 
 .slide-enter-to {
@@ -58,37 +58,34 @@ body {
 }
 
 .slide-leave {
-  height: 60px;
-
+  opacity: 1;
   transform: translateY(0);
 }
 
 .slide-leave-to {
-  transform: translateY(-420px);
+  transform: translateY(-200px);
+  opacity: 0;
 }
 
 // transition - 由左而右
-.slide-left-enter {
+.slide-opacity-enter {
   opacity: 0;
   transform: translateX(-200px);
 }
 
-.slide-left-enter-to {
+.slide-opacity-enter-to {
   opacity: 1;
-  transform: translateX(0);
 }
 
-.slide-left-enter-active,
-.slide-left-leave-active {
-  transition: opacity 0.5s, transform 2s;
+.slide-opacity-enter-active,
+.slide-opacity-leave-active {
+  transition: opacity 0.5s;
 }
 
-.slide-left-leave {
+.slide-opacity-leave {
   opacity: 1;
-  transform: translateX(0);
 }
 
-.slide-left-leave-to {
+.slide-opacity-leave-to {
   opacity: 0;
-  transform: translateX(-200px);
 }

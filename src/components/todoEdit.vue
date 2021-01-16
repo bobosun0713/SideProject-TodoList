@@ -1,5 +1,13 @@
 <template>
   <div class="todo-form">
+    <div class="todo-form__title">
+      <input
+        type="text"
+        placeholder="請輸入標題"
+        v-model="updateData.title"
+        @keydown.13="updateType"
+      />
+    </div>
     <div class="todo-form__content">
       <div class="todo-form__content__date">
         <p>
@@ -13,7 +21,7 @@
           <font-awesome-icon icon="file-signature" class="icon-1" />
           File File
         </p>
-        <input type="file" />
+        <input type="file" @change="getFileName" />
       </div>
       <div class="todo-form__content__text">
         <p>
@@ -73,37 +81,37 @@ export default {
       this.$emit('close-todo')
     },
 
-    // 判斷新增 or 修改
+    // 判斷 新增 or 修改
     updateType() {
+      if (this.updateData.title === '') return alert('請輸入標題')
       let chkAry = this.allAry.find((val) => val.id === this.editId)
       !chkAry ? this.addAction() : this.editAction()
     },
 
-    clearItem() {
-      Object.keys(this.item).forEach((val) => {
-        console.log(this.item[val])
-        if (this.item[val] !== false) {
-          this.item[val] = ''
-        }
-      })
+    getFileName(e) {
+      this.updateData.file = e.target.files[0].name
     },
 
+    // 回傳新增
     addAction() {
       this.$emit('add-todo', this.updateData)
     },
 
+    // 回傳修改
     editAction() {
       this.updateData.id = this.editId
       this.$emit('edit-todo', this.updateData)
-      this.clearItem()
     },
   },
   mounted() {
-    // 取資料 / 創建id
+    // 取資料
     this.editId = this.item.id // 暫存id
-    this.updateData = { ...this.item }
+    this.updateData = { ...this.item } // 解構資料
+
+    // 新建id
     let idx = this.allAry.map((val) => val.id)
-    this.updateData.id = idx.length === 0 ? 1 : idx[idx.length - 1] + 1 // 新增時創建id
+    this.updateData.id = idx.length === 0 ? 1 : idx[idx.length - 1] + 1
+    console.log('創建ID mounted =>', this.updateData.id)
   },
 }
 </script>
@@ -112,9 +120,21 @@ export default {
 .todo-form {
   background-color: #f2f2f2;
   box-shadow: inset 0 0 2px #888;
-  border-top: 1px solid #888;
+  transition: all 0.5s;
 
-  //
+  // 標題
+  &__title {
+    border-bottom: 2px solid #888;
+
+    > input {
+      background-color: transparent;
+      border: 0;
+      height: 65px;
+      width: 100%;
+      padding: 0 20px;
+      font-size: 1.25rem;
+    }
+  }
 
   // 資料
   &__content {
@@ -126,6 +146,8 @@ export default {
       font-weight: bold;
       margin-bottom: 5px;
     }
+
+    &__title,
     &__date,
     &__file {
       margin-bottom: 20px;

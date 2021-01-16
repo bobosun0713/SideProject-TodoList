@@ -40,23 +40,24 @@
         class="todo-add__input"
         type="text"
         placeholder="Add"
-        v-model="addTitle"
-        @focus="openTodo"
+        @focus="switchBtn"
+        v-if="!isOpen"
       />
-      <!-- 引入 -->
-      <transition name="slide">
-        <todo-edit-form
-          v-if="isOpen"
-          :allAry="allAry"
-          @add-todo="addTodo"
-          @close-todo="closeTodo"
-        ></todo-edit-form>
-      </transition>
+      <todo-edit-form
+        v-else
+        :allAry="allAry"
+        @add-todo="addTodo"
+        @close-todo="switchBtn"
+      ></todo-edit-form>
     </div>
 
     <!-- item -->
-    <draggable class="todo-list" v-model="allAry">
-      <transition-group name="slide-left">
+    <draggable
+      class="todo-list"
+      v-model="allAry"
+      handle=".todo-item__dropButton"
+    >
+      <transition-group name="slide">
         <todo-item
           v-for="item in filterTodo"
           :key="item.id"
@@ -65,6 +66,9 @@
         ></todo-item>
       </transition-group>
     </draggable>
+
+    <!-- tasks left -->
+    <p class="todo-tasks">{{ tasksLeft }} Tasks Left</p>
   </div>
 </template>
 
@@ -84,10 +88,6 @@ export default {
     return {
       isOpen: false,
       tabName: 'all',
-
-      // 資料標題
-      addTitle: '',
-
       // 原始資料
       allAry: [],
     }
@@ -98,22 +98,15 @@ export default {
       this.isOpen = false
       this.tabName = e.target.dataset.type
     },
-    // 開起視窗
-    openTodo() {
-      this.isOpen = true
-    },
-    // 關閉視窗
-    closeTodo() {
-      this.addTitle = ''
-      this.isOpen = false
-    },
 
-    // 新增
+    // 開關
+    switchBtn() {
+      this.isOpen = !this.isOpen
+    },
+    // 新增form
     addTodo(data) {
-      if (this.addTitle === '') return alert('請輸入標題')
-      data.title = this.addTitle
       this.allAry.push(data)
-      this.closeTodo()
+      this.switchBtn()
     },
   },
 
@@ -122,13 +115,30 @@ export default {
       switch (this.tabName) {
         case 'all':
           return this.allAry.sort((itemA, itemB) => {
-            return itemA.fav ? -1 : 1
+            itemA = (itemA.fav ? -100 : 0) + itemA.id
+            itemB = (itemB.fav ? -100 : 0) + itemB.id
+            return itemA > itemB ? 1 : itemA === itemB ? 0 : -1
           })
         case 'progress':
-          return this.allAry.filter((val) => !val.completed)
+          return this.allAry
+            .filter((val) => !val.completed)
+            .sort((itemA, itemB) => {
+              itemA = (itemA.fav ? -100 : 0) + itemA.id
+              itemB = (itemB.fav ? -100 : 0) + itemB.id
+              return itemA > itemB ? 1 : itemA === itemB ? 0 : -1
+            })
         case 'completed':
-          return this.allAry.filter((val) => val.completed)
+          return this.allAry
+            .filter((val) => val.completed)
+            .sort((itemA, itemB) => {
+              itemA = (itemA.fav ? -100 : 0) + itemA.id
+              itemB = (itemB.fav ? -100 : 0) + itemB.id
+              return itemA > itemB ? 1 : itemA === itemB ? 0 : -1
+            })
       }
+    },
+    tasksLeft() {
+      return this.allAry.filter((val) => !val.completed).length
     },
   },
 }
@@ -216,6 +226,14 @@ export default {
   // lists
   &-list {
     padding: 5px 0;
+  }
+
+  // tasks
+  &-tasks {
+    text-align: center;
+    margin: 10px auto;
+    font-size: 1.125rem;
+    color: rgb(88, 85, 85);
   }
 }
 </style>
