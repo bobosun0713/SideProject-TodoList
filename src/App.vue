@@ -36,19 +36,21 @@
 
     <!-- 新增 -->
     <div class="todo-add" :class="{ 'todo-add--height': isOpen }">
-      <input
-        class="todo-add__input"
-        type="text"
-        placeholder="Add"
-        @focus="switchBtn"
-        v-if="!isOpen"
-      />
-      <todo-edit-form
-        v-else
-        :allAry="allAry"
-        @add-todo="addTodo"
-        @close-todo="switchBtn"
-      ></todo-edit-form>
+      <transition>
+        <input
+          class="todo-add__input"
+          type="text"
+          placeholder="Add"
+          @focus="switchBtn"
+          v-if="!isOpen"
+        />
+        <todo-edit-form
+          v-else
+          :allAry="allAry"
+          @add-todo="addTodo"
+          @close-todo="switchBtn"
+        ></todo-edit-form>
+      </transition>
     </div>
 
     <!-- item -->
@@ -56,6 +58,7 @@
       class="todo-list"
       v-model="allAry"
       handle=".todo-item__dropButton"
+      animation="500"
     >
       <transition-group name="slide">
         <todo-item

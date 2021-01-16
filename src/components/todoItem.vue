@@ -172,6 +172,10 @@ export default {
   &:hover &__dropButton {
     opacity: 1;
   }
+  // 拖拉時
+  &:active {
+    background-color: #fad49e;
+  }
 
   // 上層
   &__content {
@@ -195,6 +199,8 @@ export default {
       }
 
       &__input {
+        color: #02428b;
+        font-weight: bold;
         transition: all 0.5s;
         border: 0;
         padding: 5px 10px;
@@ -226,6 +232,7 @@ export default {
 
       > span {
         margin-right: 15px;
+        color: #888;
       }
     }
   }
