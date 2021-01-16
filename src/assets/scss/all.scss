@@ -1,0 +1,90 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style: none;
+  text-decoration: none;
+  outline: none;
+  font-family: '微軟正黑體';
+}
+body,
+html {
+  width: 100%;
+  height: 100%;
+}
+body {
+  background-color: #e1e1e1;
+}
+
+// 通用
+.icon-1 {
+  font-size: 1.25rem;
+  color: #165675;
+  transition: all 0.5s;
+}
+.icon-2 {
+  transition: all 0.5s;
+  font-size: 1.25rem;
+  color: rgb(228, 187, 74);
+}
+// 星星
+.iconStar {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.iconStar-opacity {
+  opacity: 0;
+}
+// 狀態欄
+.icon-status {
+  color: #abaeb0;
+}
+
+// transition - 由上往下
+.slide-enter {
+  opacity: 0;
+  transform: translateY(-420px);
+}
+
+.slide-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: opacity 1s, transform 1s;
+}
+
+.slide-leave {
+  transform: translateY(0);
+}
+
+.slide-leave-to {
+  transform: translateY(-420px);
+}
+
+// transition - 由左而右
+.slide-left-enter {
+  opacity: 0;
+  transform: translateX(-200px);
+}
+
+.slide-left-enter-to {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.slide-left-enter-active,
+.slide-left-leave-active {
+  transition: opacity 1s, transform 1s;
+}
+
+.slide-left-leave {
+  transform: translateX(0);
+}
+
+.slide-left-leave-to {
+  transform: translateX(-200px);
+}
