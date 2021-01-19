@@ -7,7 +7,7 @@
           class="todo-tab__content__button"
           :class="{ 'todo-tab__content__button--active': tabName === 'all' }"
           data-type="all"
-          @click="changeTab"
+          @click="changeTab('all')"
         >
           My Task
         </button>
@@ -16,8 +16,7 @@
           :class="{
             'todo-tab__content__button--active': tabName === 'progress',
           }"
-          data-type="progress"
-          @click="changeTab"
+          @click="changeTab('progress')"
         >
           In Progress
         </button>
@@ -26,8 +25,7 @@
           :class="{
             'todo-tab__content__button--active': tabName === 'completed',
           }"
-          data-type="completed"
-          @click="changeTab"
+          @click="changeTab('completed')"
         >
           Completed
         </button>
@@ -35,22 +33,20 @@
     </div>
 
     <!-- 新增 -->
-    <div class="todo-add" :class="{ 'todo-add--height': isOpen }">
-      <transition>
-        <input
-          class="todo-add__input"
-          type="text"
-          placeholder="Add"
-          @focus="switchBtn"
-          v-if="!isOpen"
-        />
-        <todo-edit-form
-          v-else
-          :allAry="allAry"
-          @add-todo="addTodo"
-          @close-todo="switchBtn"
-        ></todo-edit-form>
-      </transition>
+    <div class="todo-add" :class="{ 'todo-add--open': isOpen }">
+      <input
+        class="todo-add__input"
+        type="text"
+        placeholder="Add"
+        @focus="switchBtn"
+        v-if="!isOpen"
+      />
+      <todo-edit-form
+        v-else
+        :allAry="allAry"
+        @add-todo="addTodo"
+        @close-todo="switchBtn"
+      ></todo-edit-form>
     </div>
 
     <!-- item -->
@@ -59,17 +55,17 @@
       v-model="allAry"
       handle=".todo-item__dropButton"
       animation="500"
+      :style="{ height: getListHeight }"
     >
       <transition-group name="slide">
         <todo-item
-          v-for="item in filterTodo"
+          v-for="item in allArySort"
           :key="item.id"
           :item="item"
           :allAry="allAry"
         ></todo-item>
       </transition-group>
     </draggable>
-
     <!-- tasks left -->
     <p class="todo-tasks">{{ tasksLeft }} Tasks Left</p>
   </div>
@@ -91,15 +87,18 @@ export default {
     return {
       isOpen: false,
       tabName: 'all',
+
       // 原始資料
       allAry: [],
+      // 篩選排序過資料
+      filterAry: [],
     }
   },
   methods: {
     // 切換tab
-    changeTab(e) {
+    changeTab(tabName) {
       this.isOpen = false
-      this.tabName = e.target.dataset.type
+      this.tabName = tabName
     },
 
     // 開關
@@ -114,22 +113,36 @@ export default {
   },
 
   computed: {
-    filterTodo() {
+    // 原資料篩選
+    allAryFilter() {
       switch (this.tabName) {
         case 'all':
-          return this.allAry.slice(0).sort((itemA) => (itemA.fav ? -1 : 0))
+          return (this.filterAry = this.allAry)
+
         case 'progress':
-          return this.allAry
-            .filter((val) => !val.completed)
-            .sort((itemA) => (itemA.fav ? -1 : 0))
+          return (this.filterAry = this.allAry.filter((val) => !val.completed))
+
         case 'completed':
-          return this.allAry
-            .filter((val) => val.completed)
-            .sort((itemA) => (itemA.fav ? -1 : 0))
+          return (this.filterAry = this.allAry.filter((val) => val.completed))
       }
     },
+    // 原資料排序
+    allArySort() {
+      return this.allAryFilter.sort((itemA, itemB) => {
+        itemA = itemA.fav ? -10 : 1
+        itemB = itemB.fav ? -10 : 1
+        return itemA > itemB ? 1 : itemA === itemB ? 0 : -1
+      })
+    },
+
+    // 剩餘任務
     tasksLeft() {
       return this.allAry.filter((val) => !val.completed).length
+    },
+
+    // 計算高度
+    getListHeight() {
+      return this.filterAry.length * 125 + 'px'
     },
   },
 }
@@ -138,6 +151,7 @@ export default {
 <style lang="scss">
 .todo {
   transition: all 0.5;
+
   // tabs
   &-tabs {
     display: flex;
@@ -197,6 +211,10 @@ export default {
     transition: all 0.5s;
     overflow: hidden;
 
+    &--open {
+      height: 485px;
+    }
+
     .todo-add__input {
       position: relative;
       border: 0;
@@ -210,12 +228,9 @@ export default {
     }
   }
 
-  &-add--height {
-    height: 485px;
-  }
-
   // lists
   &-list {
+    transition: all 0.5s;
     padding: 5px 0;
   }
 

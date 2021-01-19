@@ -17,11 +17,11 @@ body {
 }
 
 // 通用
-.icon-1 {
+.icon-edit {
   font-size: 1.25rem;
   color: #165675;
 }
-.icon-2 {
+.icon-edit--star {
   transition: all 0.5s;
   font-size: 1.25rem;
   color: rgb(228, 187, 74);
@@ -49,33 +49,32 @@ body {
 
 .slide-leave {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateX(0);
 }
 
 .slide-leave-to {
-  transform: translateY(-200px);
-  opacity: 0;
-}
-
-// transition - 由左而右
-.slide-opacity-enter {
-  opacity: 0;
   transform: translateX(-200px);
+  opacity: 0;
 }
 
-.slide-opacity-enter-to {
+// opacity
+.opacity-enter {
+  opacity: 0;
+}
+
+.opacity-enter-to {
   opacity: 1;
 }
 
-.slide-opacity-enter-active,
-.slide-opacity-leave-active {
-  transition: opacity 0.5s;
+.opacity-enter-active,
+.opacity-leave-active {
+  transition: all 0.5s;
 }
 
-.slide-opacity-leave {
+.opacity-leave {
   opacity: 1;
 }
 
-.slide-opacity-leave-to {
+.opacity-leave-to {
   opacity: 0;
 }

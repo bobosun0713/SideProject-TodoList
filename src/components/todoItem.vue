@@ -1,7 +1,7 @@
 <template>
   <div
     class="todo-item"
-    :class="{ 'todo-item--active': item.fav, 'todo-item--height': isOpen }"
+    :class="{ 'todo-item--active': item.fav, 'todo-item--open': isOpen }"
   >
     <div class="todo-item__dropButton" v-show="!isOpen && !item.completed">
       <span></span>
@@ -30,34 +30,38 @@
         <button class="todo-item__control__button" @click="pinClick">
           <font-awesome-icon
             :icon="['far', 'star']"
-            class="icon-1"
+            class="icon-edit"
             v-if="!item.fav"
           />
-          <font-awesome-icon v-else :icon="['fas', 'star']" class="icon-2" />
-        </button>
-        <button class="todo-item__control__button" @click="switchBtn">
           <font-awesome-icon
-            icon="pencil-alt"
-            v-show="!item.completed"
-            class="icon-1"
+            v-else
+            :icon="['fas', 'star']"
+            class="icon-edit--star"
           />
         </button>
+        <button
+          class="todo-item__control__button"
+          @click="switchBtn"
+          v-show="!item.completed"
+        >
+          <font-awesome-icon icon="pencil-alt" class="icon-edit" />
+        </button>
         <button class="todo-item__control__button" @click="deleteTodo">
-          <font-awesome-icon icon="trash-alt" class="icon-1" />
+          <font-awesome-icon icon="trash-alt" class="icon-edit" />
         </button>
       </div>
 
       <!-- item-status -->
       <div class="todo-item__status">
-        <span>
-          <font-awesome-icon icon="calendar-alt" class="icon" />
+        <span class="todo-item__status-state">
+          <font-awesome-icon icon="calendar-alt" />
           {{ item.day }}
         </span>
-        <span v-if="item.file"
-          ><font-awesome-icon icon="file-signature" class="icon"
+        <span class="todo-item__status-state" v-if="item.file"
+          ><font-awesome-icon icon="file-signature"
         /></span>
-        <span v-if="item.content"
-          ><font-awesome-icon icon="comments" class="icon"
+        <span class="todo-item__status-state" v-if="item.content"
+          ><font-awesome-icon icon="comments"
         /></span>
       </div>
     </div>
@@ -118,6 +122,7 @@ export default {
 
     // 修改
     editTodo(data) {
+      console.log('chkID', data.id)
       let editIndex = this.allAry.findIndex((val) => val.id === data.id)
       this.allAry.splice(editIndex, 1, data)
       this.switchBtn()
@@ -230,7 +235,7 @@ export default {
       width: 100%;
       margin: 5px 0 0 40px;
 
-      > span {
+      &-state {
         margin-right: 15px;
         color: #888;
       }
@@ -245,7 +250,7 @@ export default {
 .todo-item--active {
   background-color: antiquewhite;
 }
-.todo-item--height {
+.todo-item--open {
   height: 485px;
 }
 </style>

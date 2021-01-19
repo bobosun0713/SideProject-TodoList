@@ -5,34 +5,46 @@
         type="text"
         placeholder="請輸入標題"
         v-model="updateData.title"
+        v-focus
         @keydown.13="updateType"
       />
     </div>
     <div class="todo-form__content">
-      <div class="todo-form__content__date">
-        <p>
-          <font-awesome-icon icon="calendar-alt" class="icon-1" />
+      <div class="todo-form__content-date">
+        <p class="todo-form__content-title">
+          <font-awesome-icon icon="calendar-alt" class="icon-edit" />
           Deadline
         </p>
-        <input type="date" v-model="updateData.day" />
+        <input
+          class="todo-form__content-date__input"
+          type="date"
+          v-model="updateData.day"
+        />
       </div>
-      <div class="todo-form__content__file">
-        <p>
-          <font-awesome-icon icon="file-signature" class="icon-1" />
+      <div class="todo-form__content-file">
+        <p class="todo-form__content-title">
+          <font-awesome-icon icon="file-signature" class="icon-edit" />
           File File
         </p>
-        <input type="file" @change="getFileName" />
+        <input
+          class="todo-form__content-file__input"
+          type="file"
+          @change="getFileName"
+        />
       </div>
-      <div class="todo-form__content__text">
-        <p>
-          <font-awesome-icon icon="comments" class="icon-1" />
+      <div class="todo-form__content-text">
+        <p class="todo-form__content-title">
+          <font-awesome-icon icon="comments" class="icon-edit" />
           Comment
         </p>
-        <textarea class="" v-model="updateData.content"></textarea>
+        <textarea
+          class="todo-form__content-text__textarea"
+          v-model="updateData.content"
+        ></textarea>
       </div>
     </div>
     <div class="todo-form__submit">
-      <button class="todo-form__submit__button" @click="closeTodo">
+      <button class="todo-form__submit__cancel" @click="closeTodo">
         Cancel
       </button>
       <button class="todo-form__submit__button" @click="updateType">
@@ -71,8 +83,6 @@ export default {
     return {
       // 暫時儲存資料
       updateData: {},
-      // 暫存修改id
-      editId: 0,
     }
   },
   methods: {
@@ -84,7 +94,7 @@ export default {
     // 判斷 新增 or 修改
     updateType() {
       if (this.updateData.title === '') return alert('請輸入標題')
-      let chkAry = this.allAry.find((val) => val.id === this.editId)
+      let chkAry = this.allAry.find((val) => val.id === this.item.id)
       !chkAry ? this.addAction() : this.editAction()
     },
 
@@ -94,28 +104,35 @@ export default {
 
     // 回傳新增
     addAction() {
+      if (this.allAry.length === 0) {
+        this.updateData.id = 1
+      } else {
+        let idx = Math.max(...this.allAry.map((val) => val.id))
+        this.updateData.id = idx + 1
+      }
       this.$emit('add-todo', this.updateData)
+      // console.log('創建ID mounted =>', this.updateData.id)
     },
 
     // 回傳修改
     editAction() {
-      this.updateData.id = this.editId
+      // console.log('暫存ＩＤ', this.item.id)
+      // console.log('檢測ＩＤ =>', this.updateData)
       this.$emit('edit-todo', this.updateData)
     },
   },
   mounted() {
     // 取資料
-    this.editId = this.item.id // 暫存id
     this.updateData = { ...this.item } // 解構資料
-
-    // 找最大值 +1
-    let idx = Math.max(...this.allAry.map((val) => val.id))
-    if (this.allAry.length === 0) {
-      this.updateData.id = 1
-    } else {
-      this.updateData.id = idx + 1
-    }
-    console.log('創建ID mounted =>', this.updateData.id)
+  },
+  // 自訂屬性
+  directives: {
+    focus: {
+      // 指令的定义
+      inserted: function(el) {
+        el.focus()
+      },
+    },
   },
 }
 </script>
@@ -145,28 +162,27 @@ export default {
     padding: 20px 35px;
 
     //標提
-    p {
+    &-title {
       font-size: 1.25em;
       font-weight: bold;
       margin-bottom: 5px;
     }
 
-    &__title,
-    &__date,
-    &__file {
+    &-date,
+    &-file {
       margin-bottom: 20px;
     }
 
-    &__date {
-      input {
+    &-date {
+      &__input {
         width: 100%;
         padding: 8px 12px;
       }
     }
 
     // 文字
-    &__text {
-      textarea {
+    &-text {
+      &__textarea {
         width: 100%;
         height: 100px;
         padding: 12px;
@@ -179,8 +195,9 @@ export default {
     display: flex;
 
     // 按鈕
-    &__button {
-      color: red;
+    &__button,
+    &__cancel {
+      color: white;
       font-size: 1.25rem;
       padding: 20px;
       flex: 1;
@@ -189,9 +206,11 @@ export default {
       background-color: white;
       cursor: pointer;
     }
-    &__button:nth-of-type(2) {
+    &__cancel {
+      color: red;
+    }
+    &__button {
       background-color: #4a90e2;
-      color: white;
     }
   }
 }
