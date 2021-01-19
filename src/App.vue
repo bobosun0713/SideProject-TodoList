@@ -34,19 +34,21 @@
 
     <!-- 新增 -->
     <div class="todo-add" :class="{ 'todo-add--open': isOpen }">
-      <input
-        class="todo-add__input"
-        type="text"
-        placeholder="Add"
-        @focus="switchBtn"
-        v-if="!isOpen"
-      />
-      <todo-edit-form
-        v-else
-        :allAry="allAry"
-        @add-todo="addTodo"
-        @close-todo="switchBtn"
-      ></todo-edit-form>
+      <transition>
+        <input
+          class="todo-add__input"
+          type="text"
+          placeholder="Add"
+          @focus="switchBtn"
+          v-if="!isOpen"
+        />
+        <todo-edit-form
+          v-else
+          :allAry="allAry"
+          @add-todo="addTodo"
+          @close-todo="switchBtn"
+        ></todo-edit-form>
+      </transition>
     </div>
 
     <!-- item -->
