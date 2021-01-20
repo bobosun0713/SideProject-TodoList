@@ -104,7 +104,7 @@ export default {
 
     // 回傳新增
     addAction() {
-      if (this.allAry.length === 0) {
+      if (!this.allAry.length) {
         this.updateData.id = 1
       } else {
         let idx = Math.max(...this.allAry.map((val) => val.id))
@@ -129,7 +129,7 @@ export default {
   directives: {
     focus: {
       // 指令的定义
-      inserted: function(el) {
+      inserted(el) {
         el.focus()
       },
     },

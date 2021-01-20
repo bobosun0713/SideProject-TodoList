@@ -26,10 +26,6 @@ body {
   font-size: 1.25rem;
   color: rgb(228, 187, 74);
 }
-// 狀態欄
-.icon-status {
-  color: #abaeb0;
-}
 
 // transition - 由上往下
 .slide-enter {
@@ -57,24 +53,30 @@ body {
   opacity: 0;
 }
 
-// opacity
-.opacity-enter {
+// transition - 由上下 往左
+
+.slide-left-enter {
+  position: absolute;
   opacity: 0;
+  transform: translateY(500px);
 }
 
-.opacity-enter-to {
+.slide-left-enter-to {
   opacity: 1;
+  transform: translateY(0);
 }
 
-.opacity-enter-active,
-.opacity-leave-active {
-  transition: all 0.5s;
+.slide-left-enter-active,
+.slide-left-leave-active {
+  transition: opacity 0.5s, transform 1s;
 }
 
-.opacity-leave {
+.slide-left-leave {
   opacity: 1;
+  transform: translateX(0);
 }
 
-.opacity-leave-to {
+.slide-left-leave-to {
+  transform: translateX(-200px);
   opacity: 0;
 }

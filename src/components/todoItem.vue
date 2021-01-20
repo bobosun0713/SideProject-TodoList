@@ -8,6 +8,7 @@
       <span></span>
       <span></span>
     </div>
+
     <div class="todo-item__content" v-if="!isOpen">
       <!-- item-title -->
       <div class="todo-item__title">
@@ -53,14 +54,14 @@
 
       <!-- item-status -->
       <div class="todo-item__status">
-        <span class="todo-item__status-state">
+        <span class="todo-item__status-state" v-show="item.day">
           <font-awesome-icon icon="calendar-alt" />
           {{ item.day }}
         </span>
-        <span class="todo-item__status-state" v-if="item.file"
+        <span class="todo-item__status-state" v-show="item.file"
           ><font-awesome-icon icon="file-signature"
         /></span>
-        <span class="todo-item__status-state" v-if="item.content"
+        <span class="todo-item__status-state" v-show="item.content"
           ><font-awesome-icon icon="comments"
         /></span>
       </div>
@@ -87,7 +88,7 @@ export default {
   props: {
     item: {
       type: Object,
-      default: function() {
+      default() {
         return {}
       },
     },
@@ -133,15 +134,13 @@ export default {
 
 <style scoped lang="scss">
 .todo-item {
-  overflow: hidden;
-  height: auto;
   width: 620px;
-  height: 105px;
+  max-height: 105px;
   border-radius: 5px;
   box-shadow: 0 0 7px #888;
   margin: 0 auto;
   background-color: #f1f1f1;
-  transition: all 0.5s;
+  // transition: all 0.5s;
   position: relative;
 
   // 拖拉小手
@@ -173,10 +172,15 @@ export default {
     }
   }
 
+  &--open {
+    max-height: 485px;
+  }
+
   // 滑動拖拉小手顯示
   &:hover &__dropButton {
     opacity: 1;
   }
+
   // 拖拉時
   &:active {
     background-color: #fad49e;
@@ -249,8 +253,5 @@ export default {
 // 修飾效果
 .todo-item--active {
   background-color: antiquewhite;
-}
-.todo-item--open {
-  height: 485px;
 }
 </style>

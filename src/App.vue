@@ -34,21 +34,19 @@
 
     <!-- 新增 -->
     <div class="todo-add" :class="{ 'todo-add--open': isOpen }">
-      <transition>
-        <input
-          class="todo-add__input"
-          type="text"
-          placeholder="Add"
-          @focus="switchBtn"
-          v-if="!isOpen"
-        />
-        <todo-edit-form
-          v-else
-          :allAry="allAry"
-          @add-todo="addTodo"
-          @close-todo="switchBtn"
-        ></todo-edit-form>
-      </transition>
+      <input
+        class="todo-add__input"
+        type="text"
+        placeholder="Add"
+        @focus="switchBtn"
+        v-if="!isOpen"
+      />
+      <todo-edit-form
+        v-else
+        :allAry="allAry"
+        @add-todo="addTodo"
+        @close-todo="switchBtn"
+      ></todo-edit-form>
     </div>
 
     <!-- item -->
@@ -59,7 +57,7 @@
       animation="500"
       :style="{ height: getListHeight }"
     >
-      <transition-group name="slide">
+      <transition-group name="slide-left">
         <todo-item
           v-for="item in allArySort"
           :key="item.id"
@@ -131,9 +129,7 @@ export default {
     // 原資料排序
     allArySort() {
       return this.allAryFilter.sort((itemA, itemB) => {
-        itemA = itemA.fav ? -10 : 1
-        itemB = itemB.fav ? -10 : 1
-        return itemA > itemB ? 1 : itemA === itemB ? 0 : -1
+        return Number(itemA.fav) > Number(itemB.fav) ? -1 : 1
       })
     },
 
@@ -144,7 +140,7 @@ export default {
 
     // 計算高度
     getListHeight() {
-      return this.filterAry.length * 125 + 'px'
+      return this.filterAry.length * 105 + 'px'
     },
   },
 }
