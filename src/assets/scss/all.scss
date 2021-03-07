@@ -5,7 +5,16 @@
   list-style: none;
   text-decoration: none;
   outline: none;
-  font-family: '微軟正黑體';
+  font-family: "微軟正黑體";
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #16ebff;
+    border-radius: 10px;
+  }
+  -webkit-tap-highlight-color: transparent;
 }
 body,
 html {
@@ -13,70 +22,41 @@ html {
   height: 100%;
 }
 body {
-  background-color: #e1e1e1;
+  background-color: rgb(236, 231, 231);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+button {
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
 }
 
 // 通用
+.icon {
+  font-size: 1.125rem;
+  color: #165675;
+
+  &.active {
+    color: red;
+  }
+}
 .icon-edit {
+  margin-right: 8px;
   font-size: 1.25rem;
   color: #165675;
 }
-.icon-edit--star {
-  transition: all 0.5s;
-  font-size: 1.25rem;
-  color: rgb(228, 187, 74);
-}
 
-// transition - 由上往下
-.slide-enter {
-  opacity: 0;
-  transform: translateY(-200px);
-}
-
-.slide-enter-to {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.slide-enter-active,
-.slide-leave-active {
-  transition: all 0.5s;
-}
-
-.slide-leave {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.slide-leave-to {
-  transform: translateX(-200px);
-  opacity: 0;
-}
-
-// transition - 由上下 往左
-
-.slide-left-enter {
-  position: absolute;
-  opacity: 0;
-  transform: translateY(500px);
-}
-
-.slide-left-enter-to {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.slide-left-enter-active,
-.slide-left-leave-active {
-  transition: opacity 0.5s, transform 1s;
-}
-
-.slide-left-leave {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.slide-left-leave-to {
-  transform: translateX(-200px);
-  opacity: 0;
+// RWD
+@mixin breakpoint($point) {
+  @if $point==mobile {
+    @media (max-width: 767px) {
+      @content;
+    }
+  } @else if $point==x-mobile {
+    @media (max-width: 576px) {
+      @content;
+    }
+  }
 }

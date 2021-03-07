@@ -1,29 +1,34 @@
 <template>
   <div class="todo">
     <!-- Tab -->
-    <div class="todo-tabs">
-      <div class="todo-tabs__content">
+    <div class="todo__control">
+      <div
+        class="todo__tabs--bg"
+        :style="{ transform: `translateX(${getTabWidth}px)` }"
+      ></div>
+      <div class="todo__tabs">
         <button
-          class="todo-tab__content__button"
-          :class="{ 'todo-tab__content__button--active': tabName === 'all' }"
+          ref="tabBtn"
+          class="todo__tabs-button"
+          :class="{ active: tabName === 'all' }"
           data-type="all"
           @click="changeTab('all')"
         >
           My Task
         </button>
         <button
-          class="todo-tab__content__button"
+          class="todo__tabs-button"
           :class="{
-            'todo-tab__content__button--active': tabName === 'progress',
+            active: tabName === 'progress',
           }"
           @click="changeTab('progress')"
         >
           In Progress
         </button>
         <button
-          class="todo-tab__content__button"
+          class="todo__tabs-button"
           :class="{
-            'todo-tab__content__button--active': tabName === 'completed',
+            active: tabName === 'completed',
           }"
           @click="changeTab('completed')"
         >
@@ -33,7 +38,7 @@
     </div>
 
     <!-- 新增 -->
-    <div class="todo-add" :class="{ 'todo-add--open': isOpen }">
+    <div class="todo-add">
       <input
         class="todo-add__input"
         type="text"
@@ -44,6 +49,7 @@
       <todo-edit-form
         v-else
         :allAry="allAry"
+        class="todo-add--form"
         @add-todo="addTodo"
         @close-todo="switchBtn"
       ></todo-edit-form>
@@ -54,8 +60,6 @@
       class="todo-list"
       v-model="allAry"
       handle=".todo-item__dropButton"
-      animation="500"
-      :style="{ height: getListHeight }"
     >
       <transition-group name="slide-left">
         <todo-item
@@ -66,6 +70,7 @@
         ></todo-item>
       </transition-group>
     </draggable>
+
     <!-- tasks left -->
     <p class="todo-tasks">{{ tasksLeft }} Tasks Left</p>
   </div>
@@ -87,11 +92,9 @@ export default {
     return {
       isOpen: false,
       tabName: 'all',
-
+      tabWidth: null,
       // 原始資料
       allAry: [],
-      // 篩選排序過資料
-      filterAry: [],
     }
   },
   methods: {
@@ -115,16 +118,18 @@ export default {
   computed: {
     // 原資料篩選
     allAryFilter() {
+      let status = null
       switch (this.tabName) {
         case 'all':
-          return (this.filterAry = this.allAry)
-
+          return this.allAry
         case 'progress':
-          return (this.filterAry = this.allAry.filter((val) => !val.completed))
-
+          status = false
+          break
         case 'completed':
-          return (this.filterAry = this.allAry.filter((val) => val.completed))
+          status = true
+          break
       }
+      return this.allAry.filter((val) => val.completed === status)
     },
     // 原資料排序
     allArySort() {
@@ -138,63 +143,100 @@ export default {
       return this.allAry.filter((val) => !val.completed).length
     },
 
-    // 計算高度
-    getListHeight() {
-      return this.filterAry.length * 105 + 'px'
+    // 計算tab動畫
+    getTabWidth() {
+      let btnWidth =
+        this.tabName === 'all' ? 10 : this.tabName === 'progress' ? 1 : 2
+      return btnWidth === 10 ? btnWidth : btnWidth * this.tabWidth + 8.5
     },
+  },
+  mounted() {
+    this.tabWidth = this.$refs.tabBtn.clientWidth
+    window.addEventListener('resize', () => {
+      let screen = document.documentElement.clientWidth
+      if (screen <= 767) {
+        this.tabWidth = this.$refs.tabBtn.clientWidth
+      }
+    })
   },
 }
 </script>
 
 <style lang="scss">
 .todo {
-  transition: all 0.5;
+  width: 500px;
+  height: 700px;
+  background-color: white;
+  box-shadow: 0 0 20px #9fe7ff;
+  border-radius: 16px;
+  overflow: hidden;
 
+  @include breakpoint('mobile') {
+    width: 100%;
+    height: 100%;
+    box-shadow: unset;
+    border-radius: 0;
+  }
+
+  &__control {
+    position: relative;
+    border-radius: 16px;
+    background: linear-gradient(45deg, #16ebff, #48c1ff);
+
+    @include breakpoint('mobile') {
+      border-radius: 0;
+    }
+  }
   // tabs
-  &-tabs {
+  &__tabs {
+    position: relative;
+    z-index: 1;
     display: flex;
-    justify-content: center;
-    background-color: #4b90e2;
-    &__content {
-      width: 620px;
-      display: flex;
+    border-radius: 16px;
 
-      .todo-tab__content__button {
-        background-color: transparent;
-        border: 0;
-        flex: 1;
-        padding: 24px;
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: white;
-        width: cal;
-        cursor: pointer;
+    &-button {
+      flex: 1;
+      padding: 32px 0;
+      font-weight: bold;
+      color: white;
+      font-size: 20px;
+      transition: color 1s;
+
+      @include breakpoint('mobile') {
+        font-size: 18px;
       }
-      // 點擊之後
-      .todo-tab__content__button--active {
-        position: relative;
-        &::before {
-          content: '';
-          display: block;
-          position: absolute;
-          background-color: #01418b;
-          height: 5px;
-          width: 100%;
-          bottom: 0;
-          left: 0;
-        }
+      @include breakpoint('x-mobile') {
+        font-size: 16px;
+      }
 
-        &::after {
-          content: '';
-          display: block;
-          position: absolute;
-          top: 85%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          height: 5px;
-          border-style: solid;
-          border-width: 0 10px 10px 10px;
-          border-color: transparent transparent #01418b transparent;
+      &.active {
+        color: #4b90e2;
+      }
+    }
+
+    &--bg {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      margin: auto 0;
+      transform: translateX(10px);
+      height: 40px;
+      width: calc(100% / 3 - 20px);
+      transition: transform 0.6s;
+      z-index: 0;
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        height: 40px;
+        width: 140px;
+        border-radius: 20px;
+        background-color: white;
+        @include breakpoint('mobile') {
+          width: calc(100% - 5px);
         }
       }
     }
@@ -202,34 +244,60 @@ export default {
 
   // add
   &-add {
-    width: 620px;
-    height: 65px;
+    width: calc(100% - 60px);
     margin: 20px auto;
+    height: 55px;
     border-radius: 5px;
-    transition: all 0.5s;
-    overflow: hidden;
+    transition: all 0.6s;
+    position: relative;
 
-    &--open {
-      height: 485px;
+    @include breakpoint('mobile') {
+      margin: 15px auto 10px;
+      width: calc(100% - 20px);
+    }
+    @include breakpoint('x-mobile') {
+      height: 45px;
     }
 
-    .todo-add__input {
-      position: relative;
+    &__input {
       border: 0;
+      border-radius: 50px;
       width: 100%;
       padding: 16px 24px;
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       font-weight: bold;
       box-shadow: inset 0 0 2px #888;
       background-color: white;
-      z-index: 1;
+
+      @include breakpoint('mobile') {
+        font-size: 18px;
+      }
+      @include breakpoint('x-mobile') {
+        font-size: 16px;
+      }
+    }
+
+    &--form {
+      position: absolute;
+      z-index: 10;
     }
   }
 
   // lists
   &-list {
-    transition: all 0.5s;
-    padding: 5px 0;
+    width: calc(100% - 60px);
+    height: 460px;
+    margin: 0 auto;
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    padding: 20px 10px;
+    position: relative;
+
+    @include breakpoint('mobile') {
+      width: calc(100% - 20px);
+      height: calc(100% - 200px);
+    }
   }
 
   // tasks
@@ -239,5 +307,17 @@ export default {
     font-size: 1.125rem;
     color: rgb(88, 85, 85);
   }
+}
+
+.slide-left-move {
+  opacity: 1;
+}
+.slide-left-enter,
+.slide-left-leave-to {
+  opacity: 0;
+  transform: translateX(-300px);
+}
+.slide-left-leave-active {
+  position: absolute;
 }
 </style>

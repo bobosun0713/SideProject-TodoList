@@ -1,19 +1,16 @@
 <template>
-  <div
-    class="todo-item"
-    :class="{ 'todo-item--active': item.fav, 'todo-item--open': isOpen }"
-  >
-    <div class="todo-item__dropButton" v-show="!isOpen && !item.completed">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-
+  <div class="todo-item" :class="{ 'todo-item--active': item.fav }">
     <div class="todo-item__content" v-if="!isOpen">
+      <div class="todo-item__dropButton" v-show="!isOpen && !item.completed">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
       <!-- item-title -->
       <div class="todo-item__title">
         <input
-          class="todo-item__title__chkbox"
+          class="todo-item__title__checkbox"
           type="checkbox"
           v-model="item.completed"
         />
@@ -27,33 +24,28 @@
       </div>
 
       <!-- item-control -->
-      <div class="todo-item__control">
-        <button class="todo-item__control__button" @click="pinClick">
-          <font-awesome-icon
-            :icon="['far', 'star']"
-            class="icon-edit"
-            v-if="!item.fav"
-          />
-          <font-awesome-icon
-            v-else
-            :icon="['fas', 'star']"
-            class="icon-edit--star"
-          />
+      <div
+        class="todo-item__control"
+        :class="{ active: isBtnClick }"
+        v-show="!item.completed"
+        @click="controlClick"
+      >
+        <font-awesome-icon v-if="!isBtnClick" icon="fingerprint" class="icon" />
+        <font-awesome-icon v-else icon="times" class="icon active" />
+
+        <button class="todo-item__control-button" @click="pinClick">
+          <font-awesome-icon :icon="['fas', 'star']" class="icon" />
         </button>
-        <button
-          class="todo-item__control__button"
-          @click="switchBtn"
-          v-show="!item.completed"
-        >
-          <font-awesome-icon icon="pencil-alt" class="icon-edit" />
+        <button class="todo-item__control-button" @click="toggleEditForm">
+          <font-awesome-icon icon="pencil-alt" class="icon" />
         </button>
-        <button class="todo-item__control__button" @click="deleteTodo">
-          <font-awesome-icon icon="trash-alt" class="icon-edit" />
+        <button class="todo-item__control-button" @click="deleteTodo">
+          <font-awesome-icon icon="trash-alt" class="icon" />
         </button>
       </div>
 
       <!-- item-status -->
-      <div class="todo-item__status">
+      <div class="todo-item__status" v-show="item.content || item.day">
         <span class="todo-item__status-state" v-show="item.day">
           <font-awesome-icon icon="calendar-alt" />
           {{ item.day }}
@@ -73,7 +65,7 @@
       :item="item"
       :allAry="allAry"
       @edit-todo="editTodo"
-      @close-todo="switchBtn"
+      @close-todo="toggleEditForm"
     ></todo-edit-form>
   </div>
 </template>
@@ -102,11 +94,12 @@ export default {
   data() {
     return {
       isOpen: false,
+      isBtnClick: false,
     }
   },
   methods: {
     // 開關編輯
-    switchBtn() {
+    toggleEditForm() {
       this.isOpen = !this.isOpen
     },
 
@@ -123,25 +116,46 @@ export default {
 
     // 修改
     editTodo(data) {
-      console.log('chkID', data.id)
       let editIndex = this.allAry.findIndex((val) => val.id === data.id)
       this.allAry.splice(editIndex, 1, data)
-      this.switchBtn()
+      this.toggleEditForm()
     },
+
+    controlClick() {
+      this.isBtnClick = !this.isBtnClick
+    },
+
+    autoBtnHide(el) {
+      if (!this.$el.contains(el.target)) {
+        this.isBtnClick = false
+      }
+    },
+  },
+
+  mounted() {
+    document.addEventListener('click', this.autoBtnHide)
+  },
+  destroyed() {
+    document.removeEventListener('click', this.autoBtnHide)
   },
 }
 </script>
 
 <style scoped lang="scss">
 .todo-item {
-  width: 620px;
-  max-height: 105px;
-  border-radius: 5px;
-  box-shadow: 0 0 7px #888;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 0 5px #dbdedf;
   margin: 0 auto;
-  background-color: #f1f1f1;
-  // transition: all 0.5s;
-  position: relative;
+  background-color: white;
+  transition: all 0.5s;
+
+  &:not(:first-child) {
+    margin-top: 30px;
+  }
+  &--active {
+    background-color: #9fe7ff;
+  }
 
   // 拖拉小手
   &__dropButton {
@@ -151,6 +165,7 @@ export default {
 
     top: 0;
     bottom: 0;
+    left: 0;
     margin: auto;
 
     display: flex;
@@ -165,25 +180,16 @@ export default {
     > span {
       display: inline-block;
       margin: 2px 0;
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      background-color: #888;
+      background-color: #165675;
     }
-  }
-
-  &--open {
-    max-height: 485px;
   }
 
   // 滑動拖拉小手顯示
   &:hover &__dropButton {
     opacity: 1;
-  }
-
-  // 拖拉時
-  &:active {
-    background-color: #fad49e;
   }
 
   // 上層
@@ -192,66 +198,105 @@ export default {
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    // position: relative;
-    // z-index: 2;
     padding: 20px 30px;
+    position: relative;
+  }
 
-    // 標題
-    .todo-item__title {
-      width: 50%;
-      display: flex;
-      align-items: center;
+  // 標題
+  &__title {
+    width: 50%;
+    display: flex;
+    align-items: center;
 
-      &__chkbox {
-        width: 25px;
-        height: 25px;
-      }
-
-      &__input {
-        color: #02428b;
-        font-weight: bold;
-        transition: all 0.5s;
-        border: 0;
-        padding: 5px 10px;
-        margin-left: 5px;
-        width: 100%;
-        font-size: 1.25rem;
-        background-color: transparent;
-      }
-
-      &__input--active {
-        font-size: 1.5rem;
-        text-decoration: line-through;
-      }
-    }
-    // 按鈕
-    .todo-item__control {
-      &__button {
-        border: 0;
-        background-color: transparent;
-        margin-left: 15px;
-        cursor: pointer;
-      }
+    &__checkbox {
+      width: 20px;
+      height: 20px;
     }
 
-    // 狀態
-    .todo-item__status {
+    &__input {
+      color: #02428b;
+      font-weight: bold;
+      border: 0;
+      padding: 5px 10px;
+      margin-left: 5px;
       width: 100%;
-      margin: 5px 0 0 40px;
+      font-size: 1.25rem;
+      background-color: transparent;
+    }
 
-      &-state {
-        margin-right: 15px;
-        color: #888;
+    &__input--active {
+      text-decoration: line-through;
+    }
+  }
+
+  &__control {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #aeb0b1;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+
+    &:active {
+      box-shadow: 0 0 10px hsl(200, 72%, 66%);
+    }
+
+    &-button {
+      position: absolute;
+      z-index: -1;
+      top: 0;
+      left: 0;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      box-shadow: 0 0 5px #aeb0b1;
+      background-color: white;
+      transition: all 0.6s;
+      opacity: 0;
+    }
+
+    &.active {
+      button {
+        opacity: 1;
+        z-index: 5;
+        transition: all 0.6s;
+
+        &:nth-of-type(1) {
+          top: -35px;
+          left: -30px;
+        }
+        &:nth-of-type(2) {
+          top: 0;
+          left: -60px;
+          transition: all 0.6s 0.2s;
+        }
+        &:nth-of-type(3) {
+          top: 35px;
+          left: -30px;
+          transition: all 0.6s 0.4s;
+        }
+
+        &:hover {
+          transition: all 0.3s;
+          box-shadow: 0 0 10px hsl(200, 72%, 66%);
+        }
       }
     }
   }
-}
-.todo-item + .todo-item {
-  margin-top: 20px;
-}
 
-// 修飾效果
-.todo-item--active {
-  background-color: antiquewhite;
+  // 狀態
+  &__status {
+    width: 100%;
+    margin: 5px 0 0 40px;
+
+    &-state {
+      margin-right: 15px;
+      color: #888;
+    }
+  }
 }
 </style>

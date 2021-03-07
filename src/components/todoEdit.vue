@@ -139,33 +139,42 @@ export default {
 
 <style scoped lang="scss">
 .todo-form {
-  background-color: #f2f2f2;
-  box-shadow: inset 0 0 2px #888;
-  transition: all 0.5s;
+  width: 100%;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 0 5px #cde1e2;
+  transition: all 0.6s;
+  overflow: hidden;
 
   // 標題
   &__title {
-    border-bottom: 2px solid #888;
+    border-bottom: 1px solid #888;
 
     > input {
       background-color: transparent;
       border: 0;
-      height: 65px;
+      height: 55px;
       width: 100%;
       padding: 0 20px;
       font-size: 1.25rem;
+      @include breakpoint('x-mobile') {
+        height: 45px;
+      }
     }
   }
 
   // 資料
   &__content {
     padding: 20px 35px;
+    @include breakpoint('x-mobile') {
+      padding: 15px 35px;
+    }
 
     //標提
     &-title {
-      font-size: 1.25em;
+      font-size: 16px;
       font-weight: bold;
-      margin-bottom: 5px;
+      margin-bottom: 10px;
     }
 
     &-date,
@@ -175,6 +184,9 @@ export default {
 
     &-date {
       &__input {
+        box-shadow: 0 0 10px #bdeeff;
+        border: 0;
+        border-radius: 10px;
         width: 100%;
         padding: 8px 12px;
       }
@@ -183,6 +195,8 @@ export default {
     // 文字
     &-text {
       &__textarea {
+        box-shadow: 0 0 10px #bdeeff;
+        border: 0;
         width: 100%;
         height: 100px;
         padding: 12px;
@@ -198,8 +212,8 @@ export default {
     &__button,
     &__cancel {
       color: white;
-      font-size: 1.25rem;
-      padding: 20px;
+      font-size: 16px;
+      padding: 15px 20px;
       flex: 1;
       border: 0;
       font-weight: bold;
